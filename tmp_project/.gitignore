@@ -1,4 +1,10 @@
-*.db
 __pycache__/
+*.pyc
 .venv/
+venv/
+*.db
+.git/
+.gitignore
 .env
+.DS_Store
+*.log
