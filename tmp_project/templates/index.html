@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест оборудования</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { border-collapse: collapse; margin-top: 10px; width: 100%; max-width: 500px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Регистрация событий</h1>
+
+    <form action="/save" method="POST" style="margin-bottom: 20px;">
+        <input type="text" name="name" placeholder="Имя оператора / устройства" required>
+        <button type="submit">💾 Записать</button>
+    </form>
+
+    <hr>
+    <h2>📊 Содержимое БД</h2>
+    <!-- Кнопка 2: явный запрос к серверу -->
+    <button id="loadBtn" onclick="loadLogs()">🔄 Загрузить данные</button>
+
+    <table id="logsTable" class="hidden">
+        <thead><tr><th>Имя</th><th>Время записи</th></tr></thead>
+        <tbody id="logsBody"></tbody>
+    </table>
+
+    <script>
+        function loadLogs() {
+            fetch('/logs')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('logsBody');
+                    tbody.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="2">Нет записей</td></tr>';
+                    } else {
+                        data.forEach(item => {
+                            tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.time}</td></tr>`;
+                        });
+                    }
+                    // Показываем таблицу только после успешного ответа
+                    document.getElementById('logsTable').classList.remove('hidden');
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Ошибка загрузки данных');
+                });
+        }
+    </script>
+</body>
+</html>
