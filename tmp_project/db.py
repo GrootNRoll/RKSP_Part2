@@ -1,10 +1,8 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "equipment_log.db")
-
-def init_db():
-    with sqlite3.connect(DB_PATH) as conn:
+def init_db(db_path: str):
+    with sqlite3.connect(db_path) as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,11 +11,13 @@ def init_db():
             )
         """)
 
-def insert_log(name: str):
-    with sqlite3.connect(DB_PATH) as conn:
+def insert_log(name: str, db_path: str = None):
+    db_path = db_path or os.environ.get('DB_PATH', 'equipment_log.db')
+    with sqlite3.connect(db_path) as conn:
         conn.execute("INSERT INTO logs (name) VALUES (?)", (name,))
 
-def get_all_logs():
-    with sqlite3.connect(DB_PATH) as conn:
+def get_all_logs(db_path: str = None):
+    db_path = db_path or os.environ.get('DB_PATH', 'equipment_log.db')
+    with sqlite3.connect(db_path) as conn:
         cursor = conn.execute("SELECT name, recorded_at FROM logs ORDER BY id DESC")
         return cursor.fetchall()

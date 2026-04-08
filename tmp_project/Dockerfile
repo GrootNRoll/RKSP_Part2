@@ -10,6 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Явно указываем порт и запускаем
-ENV PORT=5000
+ENV PORT=5000 \
+    DB_PATH=/data/equipment_log.db \
+    FLASK_DEBUG=false
 EXPOSE 5000
 CMD ["python", "app.py"]
