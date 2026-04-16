@@ -31,24 +31,29 @@
     <script>
         function loadLogs() {
             fetch('/logs')
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
                     const tbody = document.getElementById('logsBody');
                     tbody.innerHTML = '';
-                    
-                    if (data.length === 0) {
+
+                    // Сервер теперь возвращает объект { entries: [...], total_saves: ... }
+                    const entries = Array.isArray(data.entries) ? data.entries : [];
+
+                    if (entries.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="2">Нет записей</td></tr>';
                     } else {
-                        data.forEach(item => {
+                        entries.forEach(item => {
                             tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.time}</td></tr>`;
                         });
                     }
-                    // Показываем таблицу только после успешного ответа
                     document.getElementById('logsTable').classList.remove('hidden');
                 })
                 .catch(err => {
-                    console.error(err);
-                    alert('Ошибка загрузки данных');
+                    console.error('Ошибка загрузки:', err);
+                    alert('Не удалось загрузить данные из БД');
                 });
         }
     </script>
